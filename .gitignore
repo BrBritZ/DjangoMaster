@@ -17,4 +17,10 @@ tests/.coverage
 build/
 tests/report/
 
+#generated file when mergeing
 *.orig
+
+#database
+db.sqlite3 
+
+.idea/workspace.xml
