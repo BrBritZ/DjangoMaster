@@ -2,6 +2,14 @@ from django.test import TestCase
 from rango.models import Category
 from django.core.urlresolvers import reverse
 
+#Chapter 9
+import os.path
+from rango.models import User, UserProfile
+from rango.forms import UserForm, UserProfileForm
+from selenium.webdriver.common.keys import Keys
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.storage import default_storage
+
 class CategoryMethodTests(TestCase):
     def test_ensure_views_are_positive(self):
         """
@@ -60,4 +68,35 @@ class IndexViewTests(TestCase):
 
         num_cats = len(response.context['categories'])
         self.assertEqual(num_cats, 4)
+
+class Chapter9ViewTests(TestCase):
+    def test_upload_image(self):
+        # Create fake user and image to upload to register user
+        image = SimpleUploadedFile("testuser.jpg", "file_content", content_type="image/jpeg")
+        response = self.client.post(reverse('register'),
+                                    {'username': 'testuser', 'password': 'test1234',
+                                     'email': 'testuser@testuser.com',
+                                     'website': 'http://www.testuser.com',
+                                     'picture': image})
+
+        # Check user was successfully registered
+        self.assertIn('thank you for registering!'.lower(), response.content.lower())
+        user = User.objects.get(username='testuser')
+        user_profile = UserProfile.objects.get(user=user)
+        path_to_image = './media/profile_images/testuser.jpg'
+
+        # Check file was saved properly
+        self.assertTrue(os.path.isfile(path_to_image))
+
+        # Delete fake file created
+        default_storage.delete('./media/profile_images/testuser.jpg')
+
+    def test_login_provides_error_message(self):
+        # Access login page
+        response = self.client.post(reverse('login'), {'username': 'wronguser', 'password': 'wrongpass'})
+
+        try:
+            self.assertIn('wronguser', response.content)
+        except:
+            self.assertIn('wrongpass', response.content)
 
