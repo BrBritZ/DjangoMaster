@@ -105,7 +105,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#Reirect URL for user who not logined
+# Session
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Reirect URL for user who not logined
 LOGIN_URL = '/rango/login/'
 
 # Internationalization
