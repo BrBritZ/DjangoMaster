@@ -12,8 +12,10 @@ urlpatterns = [
     url(r'^category/(?P<category_name_slug>[\w\-]+)/$',
         views.show_category, name='show_category'),
 
-    url(r'^register/$', views.register, name='register'), # New pattern!
-    url(r'^login/$', views.user_login, name='login'),
     url(r'^restricted/$', views.restricted, name='restricted'),
-    url(r'^logout/$', views.user_logout, name='logout'),
+
+    # Due to using Django-Registration-Redux, remove login, logout, and registration
+    #url(r'^register/$', views.register, name='register'), # New pattern!
+    #url(r'^login/$', views.user_login, name='login'),
+    #url(r'^logout/$', views.user_logout, name='logout'),
 ]

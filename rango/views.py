@@ -168,6 +168,14 @@ def add_page(request, category_name_slug):
     context_dict = {'form': form, 'category': category}
     return render(request, 'rango/add_page.html', context_dict)
 
+# Use the login_required() decorator to ensure only those logged in can
+# acess the view.
+@login_required
+def restricted(request):
+    return render(request, 'rango/restricted.html', {})
+
+#Due to using Django-Registration-Redux, remove login, logout, and registration
+'''
 def register(request):
     # A boolean value for telling the template
     # whether the registration was successful.
@@ -270,15 +278,10 @@ def user_login(request):
         # blank dictionary object...
         return render(request, 'rango/login.html', {})
 
-# Use the login_required() decorator to ensure only those logged in can
-# acess the view.
-@login_required
-def restricted(request):
-    return render(request, 'rango/restricted.html', {})
-
 @login_required
 def user_logout(request):
     # Since we know the user is logged in,w we can now just log them out.
     logout(request)
     # Take the user back to the homepage.
     return HttpResponseRedirect(reverse('index'))
+'''

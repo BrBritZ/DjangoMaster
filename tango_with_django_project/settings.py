@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rango',
+    'registration' # add in the registration package
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -105,11 +106,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Registration package's configuration
+# If True, users can register
+REGISTRATION_OPEN = True
+# One-week activation window
+ACCOUNT_ACTIVATION_DAYS = 7
+# If True, the user will be automatically loggied in
+REGISTRATION_AUTO_LOGIN = True
+# The page you want users to arrive at after they successfully log in
+LOGIN_REDIRECT_URL = '/rango/'
+# The page users are directed to if they are not logged in,
+# and are trying to access paged requiring authentication
+LOGIN_URL = '/accounts/login/'
+
 # Session
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Reirect URL for user who not logined
-LOGIN_URL = '/rango/login/'
+#LOGIN_URL = '/rango/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
