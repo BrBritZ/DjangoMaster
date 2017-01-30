@@ -24,6 +24,9 @@ from datetime import datetime
 #import search function
 from rango.bing_search import run_query
 
+#redirect fuction
+from django.shortcuts import redirect
+
 # Helper function to handle the cookie on server side
 def get_server_sie_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
@@ -123,6 +126,14 @@ def show_category(request, category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
+    # Get query text for search function
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            # Run our Bing function to get the result list!
+            context_dict['result_list'] = run_query(query)
+            context_dict['query'] = query
+
     # Go render the response and return it to the client.
     return render(request, 'rango/category.html', context_dict)
 
@@ -192,6 +203,27 @@ def search(request):
     return render(request, 'rango/search.html',
                   {'result_list': result_list,
                    'query': query})
+
+def track_url(request):
+    page_id = None
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            pages = Page.objects.filter(id=page_id)
+
+            # if page id is valid, go to the page url
+            if pages:
+                page = pages[0]
+
+                #update views
+                page.views = page.views + 1
+                page.save()
+
+                # redirect to page url
+                return redirect(page.url)
+
+    #if no parameteter in HTTP GET request, redirect to home page
+    return HttpResponseRedirect(reverse('index'))
 
 #Due to using Django-Registration-Redux, remove login, logout, and registration
 '''

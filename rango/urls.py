@@ -14,6 +14,7 @@ urlpatterns = [
 
     url(r'^restricted/$', views.restricted, name='restricted'),
     url(r'^search/$', views.search, name='search'),
+    url(r'^goto/$', views.track_url, name='goto'),
 
     # Due to using Django-Registration-Redux, remove login, logout, and registration
     #url(r'^register/$', views.register, name='register'), # New pattern!
