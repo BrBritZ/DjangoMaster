@@ -7,16 +7,22 @@ from rango.models import Page
 from rango.forms import CategoryForm
 from rango.forms import PageForm
 from rango.forms import UserForm, UserProfileForm
+
 #import for login page
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 #import for logout page
 from django.contrib.auth import logout
+
 #import for authentication checking
 from django.contrib.auth.decorators import login_required
+
 #import for checking visit time
 from datetime import datetime
+
+#import search function
+from rango.bing_search import run_query
 
 # Helper function to handle the cookie on server side
 def get_server_sie_cookie(request, cookie, default_val=None):
@@ -173,6 +179,16 @@ def add_page(request, category_name_slug):
 @login_required
 def restricted(request):
     return render(request, 'rango/restricted.html', {})
+
+def search(request):
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            # Run our Bing function to get the result list!
+            result_list = run_query(query)
+    return render(request, 'rango/search.html', {'result_list': result_list})
 
 #Due to using Django-Registration-Redux, remove login, logout, and registration
 '''

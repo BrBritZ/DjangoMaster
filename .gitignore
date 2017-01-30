@@ -24,3 +24,6 @@ tests/report/
 db.sqlite3 
 
 .idea/workspace.xml
+
+#api-key
+*.key
