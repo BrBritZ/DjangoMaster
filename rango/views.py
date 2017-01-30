@@ -4,6 +4,8 @@ from django.http import HttpResponse
 #import the Category model
 from rango.models import Category
 from rango.models import Page
+from rango.models import UserProfile
+from django.contrib.auth.models import User
 from rango.forms import CategoryForm
 from rango.forms import PageForm
 from rango.forms import UserForm, UserProfileForm
@@ -224,6 +226,54 @@ def track_url(request):
 
     #if no parameteter in HTTP GET request, redirect to home page
     return HttpResponseRedirect(reverse('index'))
+
+@login_required
+def register_profile(request):
+    profile_form = UserProfileForm()
+
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, request.FILES)
+
+        if profile_form.is_valid():
+            user = profile_form.save(commit=False)
+            user.user = request.user
+            user.save()
+
+            return redirect('index')
+        else:
+            print(profile_form.errors)
+
+    return render(request, 'rango/profile_registration.html', {'form': profile_form})
+
+@login_required
+def profile(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return redirect('index')
+
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    form = UserProfileForm(
+        {'website': userprofile.website, 'picture': userprofile.picture}
+    )
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect('profile', user.username)
+        else:
+            print(form.errors)
+
+    return render(request, 'rango/profile.html',
+                  {'userprofile': userprofile, 'selecteduser': user, 'form': form})
+
+@login_required
+def list_profiles(request):
+    userprofile_list = UserProfile.objects.all()
+
+    return render(request, 'rango/list_profiles.html',
+                  {'userprofile_list': userprofile_list})
 
 #Due to using Django-Registration-Redux, remove login, logout, and registration
 '''
