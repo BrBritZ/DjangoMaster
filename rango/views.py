@@ -89,6 +89,8 @@ def index(request):
 
 def about(request):
     # test session. If it works, print result and detete the test session
+    context_dict = {}
+
     if request.session.test_cookie_worked():
         print("TEST COOKIE WORKED!")
         request.session.delete_test_cookie()
