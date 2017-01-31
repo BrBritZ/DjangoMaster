@@ -43,9 +43,39 @@ def populate():
          "url": "http://flask.pocco.org",
          "views": 21}]
 
+    pascal_pages = [
+        {"title": "Pascal Tutorial",
+         "url": "https://www.tutorialspoint.com/pascal/",
+         "views": 11},
+        {"title": "Pascal-Programming.info - A Pascal Tutorial",
+         "url": "http://pascal-programming.info/",
+         "views": 111}]
+
+    perl_pages = [
+        {"title": "Beginner's Introduction to Perl",
+         "url": "http://www.perl.com/pub/2000/10/begperl1.html",
+         "views": 22}]
+
+    php_pages = []
+
+    prolog_pages = []
+
+    postscript_pages = []
+
+    programming_pages = [
+        {"title": "Computer Programming",
+         "url": "https://www.tutorialspoint.com/computer_programming/",
+         "views": 1021}]
+
     cats = {"Python": {"pages": python_pages, "views": 128, "likes": 64},
             "Django": {"pages": django_pages, "views": 64, "likes": 32},
-            "Other Frameworks": {"pages": other_pages, "views": 32, "likes": 16}}
+            "Other Frameworks": {"pages": other_pages, "views": 32, "likes": 16},
+            "Pascal": {"pages": pascal_pages, "views": 25, "likes": 3},
+            "Perl": {"pages": perl_pages, "views": 5, "likes": 1},
+            "PHP": {"pages": php_pages, "views": 121, "likes": 30},
+            "Prolog": {"pages": prolog_pages, "views": 3, "likes": 0},
+            "Postscript": {"pages": postscript_pages, "views": 15, "likes": 1},
+            "Programming": {"pages": programming_pages, "views": 3040, "likes": 355}}
 
     # If you want to add more categories or pages,
     # add them to the dictionaries above
