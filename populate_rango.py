@@ -40,7 +40,7 @@ def populate():
          "url": "http://bottlepy.org/docs/dev",
          "views": 16},
         {"title": "Flask",
-         "url": "http://flask.pocco.org",
+         "url": "http://flask.pocoo.org",
          "views": 21}]
 
     pascal_pages = [
