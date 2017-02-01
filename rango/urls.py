@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^profile/$', views.list_profiles, name='list_profiles'),
     url(r'^like/$', views.like_category, name='like_category'),
     url(r'^suggest/$', views.suggest_category, name='suggestion'),
+    url(r'^add/$', views.auto_add_page, name='auto_add_page'),
+
     # Due to using Django-Registration-Redux, remove login, logout, and registration
     #url(r'^register/$', views.register, name='register'), # New pattern!
     #url(r'^login/$', views.user_login, name='login'),

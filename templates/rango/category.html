@@ -19,15 +19,17 @@
             {% endif %}
         </div>
 
-        {% if pages %}
-            <ul>
-                {% for page in pages %}
-                    <li><a href="{% url 'goto' %}?page_id={{ page.id }}">{{ page.title }} ({{ page.views }})</a> </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>No pages currently in category.</strong>
-        {% endif %}
+        <div id="pages">
+            {% if pages %}
+                <ul>
+                    {% for page in pages %}
+                        <li><a href="{% url 'goto' %}?page_id={{ page.id }}">{{ page.title }} ({{ page.views }})</a> </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <strong>No pages currently in category.</strong>
+            {% endif %}
+        </div>
     {% else %}
         The specified category does not exist!
     {% endif %}
@@ -61,6 +63,14 @@
                             <a href="{{ result.url }}">{{ result.name }}</a>
                             </h4>
                             <p class="list-group-item-text">{{ result.snippet }}</p>
+
+                            {% if user.is_authenticated %}
+                                <button data-catid="{{ category.id }}" data-title="{{ result.name }}"
+                                        data-url="{{ result.url }}"
+                                        class="rango-add btn btn-info btn-sm" type="button">
+                                    Add
+                                </button>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
