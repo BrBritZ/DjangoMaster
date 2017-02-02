@@ -1,5 +1,5 @@
 from django.test import TestCase
-from rango.models import Category
+from rango.models import Category, Page
 from django.core.urlresolvers import reverse
 
 #Chapter 9
@@ -72,95 +72,30 @@ class IndexViewTests(TestCase):
         num_cats = len(response.context['categories'])
         self.assertEqual(num_cats, 4)
 
-class Chapter9ViewTests(TestCase):
-    def test_upload_image(self):
-        # Create fake user and image to upload to register user
-        image = SimpleUploadedFile("testuser.jpg", "file_content", content_type="image/jpeg")
-        response = self.client.post(reverse('register'),
-                                    {'username': 'testuser', 'password': 'test1234',
-                                     'email': 'testuser@testuser.com',
-                                     'website': 'http://www.testuser.com',
-                                     'picture': image})
+class Chapter18Tests(TestCase):
+    def test_visit_time_not_in_the_future(self):
+        page = Page()
+        page.category = Category.objects.get_or_create(name='test')[0]
+        page.views = 0
+        page.first_visit = datetime.now() + timedelta(days=1)
+        page.last_visit = datetime.now() + timedelta(days=5)
 
-        # Check user was successfully registered
-        self.assertIn('thank you for registering!'.lower(), response.content.lower())
-        user = User.objects.get(username='testuser')
-        user_profile = UserProfile.objects.get(user=user)
-        path_to_image = './media/profile_images/testuser.jpg'
+        page.save()
 
-        # Check file was saved properly
-        self.assertTrue(os.path.isfile(path_to_image))
+        self.assertEqual(
+            ((datetime.now() - page.first_visit).days < 0), False)
 
-        # Delete fake file created
-        default_storage.delete('./media/profile_images/testuser.jpg')
+        self.assertEqual(
+            ((datetime.now() - page.last_visit).days < 0), False)
 
-    def test_login_provides_error_message(self):
-        # Access login page
-        response = self.client.post(reverse('login'), {'username': 'wronguser', 'password': 'wrongpass'})
+    def test_last_visit_equal_or_after_first_visit(self):
+        page = Page()
+        page.category = Category.objects.get_or_create(name='test')[0]
+        page.views = 0
+        page.first_visit = datetime.now()
+        page.last_visit = datetime.now() - timedelta(days=5)
 
-        try:
-            self.assertIn('wronguser', response.content)
-        except:
-            self.assertIn('wrongpass', response.content)
+        page.save()
 
-
-# ====== Chapter 10
-class Chapter10SessionTests(TestCase):
-    def test_user_number_of_access_and_last_access_to_index(self):
-        #Access index page 100 times
-        for i in xrange(0, 100):
-            self.client.get(reverse('index'))
-            session = self.client.session
-
-            # Check it exists visits and last_visit attributes on session
-            self.assertIsNotNone(self.client.session['visits'])
-            self.assertIsNotNone(self.client.session['last_visit'])
-
-            # Check last visit time is within 0.1 second interval from now
-            # self.assertAlmostEqual(datetime.now(),
-            #     datetime.strptime(session['last_visit'], "%Y-%m-%d %H:%M:%S.%f"), delta=timedelta(seconds=0.1))
-
-            # Get last visit time subtracted by one day
-            last_visit = datetime.now() - timedelta(days=1)
-
-            # Set last visit to a day ago and save
-            session['last_visit'] = str(last_visit)
-            session.save()
-
-            # Check if the visits number in session is being incremented and it's correct
-            self.assertEquals(session['visits'], 1)
-            # before it was i+1 but visits shouldn't change for the same ip visited in one day
-
-
-class Chapter10ViewTests(TestCase):
-    def test_index_shows_number_of_visits(self):
-        #Access index
-        response = self.client.get(reverse('index'))
-
-        # Check it contains visits message
-        self.assertIn('visits: 1'.lower(), response.content.lower())
-
-    def test_about_page_shows_number_of_visits(self):
-        #Access index page to count one visit
-        self.client.get(reverse('index'))
-
-        # Access about page
-        response = self.client.get(reverse('about'))
-
-        # Check it contains visits message
-        self.assertIn('visits: 1'.lower(), response.content.lower())
-
-    def test_visit_number_is_passed_via_context(self):
-        #Access index
-        response = self.client.get(reverse('index'))
-
-        # Check it contains visits message in the context
-        self.assertIn('visits', response.context)
-
-        #Access about page
-        response = self.client.get(reverse('about'))
-
-        # Check it contains visits message in the context
-        self.assertIn('visits', response.context)
-
-
+        self.assertEqual(
+            ((page.last_visit - page.first_visit).days < 0), False)

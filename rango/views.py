@@ -181,6 +181,8 @@ def add_page(request, category_name_slug):
                 page = form.save(commit=False)
                 page.category = category
                 page.views = 0
+                page.first_visit = datetime.now()
+                page.last_visit = datetime.now()
                 page.save()
                 return show_category(request, category_name_slug)
             else:
@@ -221,6 +223,8 @@ def track_url(request):
 
                 #update views
                 page.views = page.views + 1
+                #update last visit
+                page.last_visit = str(datetime.now())
                 page.save()
 
                 # redirect to page url
@@ -423,6 +427,7 @@ def user_login(request):
             # If the account active? It could have been disabled.
             if user.is_active:
                 # If the account is valid and active, we can log the user in.
+                # We'll send the user back to the homepage.
                 # We'll send the user back to the homepage.
                 login(request, user)
                 return HttpResponseRedirect(reverse('index'))

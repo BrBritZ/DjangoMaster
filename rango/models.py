@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 # Create your models here.
 class Category(models.Model):
@@ -36,6 +37,23 @@ class Page(models.Model):
     title = models.CharField(max_length=128)
     url = models.URLField()
     views = models.IntegerField(default=0)
+
+    last_visit = models.DateTimeField(default=datetime.now())
+    first_visit = models.DateTimeField(default=datetime.now())
+
+    def save(self, *args, **kwargs):
+
+        #Checking that time cannot be the future
+        if (datetime.now() - self.last_visit).days < 0:
+            self.last_visit = datetime.now()
+        if (datetime.now() - self.first_visit).days < 0:
+            self.first_visit = datetime.now()
+
+        # Checking that last visit time have to equal or after first visit
+        if ((self.last_visit - self.first_visit).days < 0):
+            self.last_visit = self.first_visit
+
+        super(Page, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
