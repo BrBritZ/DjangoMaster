@@ -4,6 +4,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 # Create your models here.
 class Category(models.Model):
@@ -38,16 +39,16 @@ class Page(models.Model):
     url = models.URLField()
     views = models.IntegerField(default=0)
 
-    last_visit = models.DateTimeField(default=datetime.now())
-    first_visit = models.DateTimeField(default=datetime.now())
+    last_visit = models.DateTimeField(default=timezone.now())
+    first_visit = models.DateTimeField(default=timezone.now())
 
     def save(self, *args, **kwargs):
 
         #Checking that time cannot be the future
-        if (datetime.now() - self.last_visit).days < 0:
-            self.last_visit = datetime.now()
-        if (datetime.now() - self.first_visit).days < 0:
-            self.first_visit = datetime.now()
+        if (timezone.now() - self.last_visit).days < 0:
+            self.last_visit = timezone.now()
+        if (timezone.now() - self.first_visit).days < 0:
+            self.first_visit = timezone.now()
 
         # Checking that last visit time have to equal or after first visit
         if ((self.last_visit - self.first_visit).days < 0):

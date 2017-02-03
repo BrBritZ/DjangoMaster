@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 
 #Chapter 10
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 class CategoryMethodTests(TestCase):
     def test_ensure_views_are_positive(self):
@@ -77,23 +78,23 @@ class Chapter18Tests(TestCase):
         page = Page()
         page.category = Category.objects.get_or_create(name='test')[0]
         page.views = 0
-        page.first_visit = datetime.now() + timedelta(days=1)
-        page.last_visit = datetime.now() + timedelta(days=5)
+        page.first_visit = timezone.now() + timedelta(days=1)
+        page.last_visit = timezone.now() + timedelta(days=5)
 
         page.save()
 
         self.assertEqual(
-            ((datetime.now() - page.first_visit).days < 0), False)
+            ((timezone.now() - page.first_visit).days < 0), False)
 
         self.assertEqual(
-            ((datetime.now() - page.last_visit).days < 0), False)
+            ((timezone.now() - page.last_visit).days < 0), False)
 
     def test_last_visit_equal_or_after_first_visit(self):
         page = Page()
         page.category = Category.objects.get_or_create(name='test')[0]
         page.views = 0
-        page.first_visit = datetime.now()
-        page.last_visit = datetime.now() - timedelta(days=5)
+        page.first_visit = timezone.now()
+        page.last_visit = timezone.now() - timedelta(days=5)
 
         page.save()
 

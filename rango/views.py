@@ -21,7 +21,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
 #import for checking visit time
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 #import search function
 from rango.bing_search import run_query
@@ -181,8 +182,8 @@ def add_page(request, category_name_slug):
                 page = form.save(commit=False)
                 page.category = category
                 page.views = 0
-                page.first_visit = datetime.now()
-                page.last_visit = datetime.now()
+                page.first_visit = timezone.now()
+                page.last_visit = timezone.now()
                 page.save()
                 return show_category(request, category_name_slug)
             else:
@@ -212,26 +213,25 @@ def search(request):
 
 def track_url(request):
     page_id = None
+    url = '/rango/'
     if request.method == 'GET':
         if 'page_id' in request.GET:
             page_id = request.GET['page_id']
-            pages = Page.objects.filter(id=page_id)
 
-            # if page id is valid, go to the page url
-            if pages:
-                page = pages[0]
+            #try:
+            page = Page.objects.get(id=page_id)
 
-                #update views
-                page.views = page.views + 1
-                #update last visit
-                page.last_visit = str(datetime.now())
-                page.save()
+            #update views
+            page.views = page.views + 1
+            # update last visit
+            page.last_visit = timezone.now()
 
-                # redirect to page url
-                return redirect(page.url)
+            page.save()
+            url = page.url
+            #except:
+            #    pass
 
-    #if no parameteter in HTTP GET request, redirect to home page
-    return HttpResponseRedirect(reverse('index'))
+    return redirect(url)
 
 @login_required
 def register_profile(request):
